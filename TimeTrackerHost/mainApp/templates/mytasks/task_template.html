@@ -1,0 +1,108 @@
+{% extends "home/wrapper.html" %}
+{% block content %}
+	{% if user.profile in task.project.developers.all %}
+		<div class="container h-100 pt-4 pb-4">
+			<!-- Card	 -->
+			<div class="card  text-lg bg-dark border border-dark text-white">
+				<!-- Header -->
+				<div class="card-header text-center h4" >
+					<div class=" text-center text-white h5 m-2 ml-md-5 d-flex  ">
+						<div class="text-center  w-100">
+							{{task.topic}} ({{task.task_type}})
+						</div>
+						<div>
+							<span class="badge {% if task.priority == 'High' %}badge-warning
+								{% elif task.priority == 'Normal' %}  badge-success
+								{% elif task.priority == 'Extra' %} badge-danger
+							{% endif %}">{{task.priority}}</span>
+						</div>
+						
+					</div>
+				</div>
+				<!-- Body -->
+				<div class="card-body overflow-auto bg-white border border-dark ">
+					
+					<div class="row justify-content-end w-100">
+						<!-- Button trigger modal info -->
+
+						<button type="button" class="btn align-center btn-dark m-2" data-toggle="modal" data-target="#info">
+						<div class="h4  "><i class="fas fa-info align-bottom"></i></div>
+						</button>
+						<div>{% include 'mytasks/info_modal.html' %}</div>
+
+						<!-- Button trigger modal comment -->
+
+						<button type="button" class="btn  m-2 btn-dark" data-toggle="modal" data-target="#exampleModalLong">
+						<div class="h4  "><i class="fas pt-2 fa-pencil-alt align-bottom"></i></div>
+						</button>
+
+
+						<!-- Window Edit -->
+						<div class="text-left mb-4">{% include 'mytasks/modal_window_edit.html' %}</div>
+						
+					</div>
+					
+					<div class="text-dark text-center">
+						<h4>Task description</h4>
+						{{ task.description }} <br>
+					
+						<br>
+						
+						
+						
+						
+						
+							
+						<div class="pt-5 w-100 form-inline justify-content-center">
+							<a class="btn commbut " id="showcomm"  data-toggle="collapse"  data-target="#collapseComments" aria-expanded="false" aria-controls="collapseComments">
+								Hide comments
+							</a>
+							<!-- Button trigger modal -->
+							<a class="btn commbut"  data-toggle="modal" data-target="#AddComment">
+								Add Comment
+							</a>
+							<div class="text-left mb-4">{% include 'mytasks/modal_add_comment.html' %}</div>
+							<!-- Add Comment -->
+							{% if user.profile == task.creator %}
+
+
+
+							<!-- Deleting comments just for authors -->
+
+<!-- 							<form action="/mytasks/{{task.id}}/" method="POST" class="">
+								{% csrf_token %}
+								<button type="submit" name="clearhistoryname" class="btn commbut link " >
+									Clear all comments
+								</button>
+							</form> -->
+							{% endif %}
+						</div >
+						<div class="collapse pt-3 show comment_container"  id="collapseComments">{% include 'mytasks/comment_block_template.html' %}</div>
+					</div>
+				</div>
+				<!-- Footer -->
+				<div class="card-footer text-center ">
+					<div class=" d-flex flex-row justify-content-center flex-wrap">
+
+
+						<small>{{task.project}}</small>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	{% else %}
+		<div class="container h-100 d-flex justify-content-center align-items-center">
+			<div class='text-center'>
+				<div class="pb-5"><i class="far fa-angry" id="project_image"></i></div>
+				<div class="h5 ">You are not assigned on this task. </div>
+			</div>
+		</div>
+	{% endif %}
+	
+	<script type="text/javascript">
+		var mytitle = "{{ task.topic }}";
+	</script>
+	{% load static %}
+	<script src="{% static 'js/task_templatescript.js' %}"></script>
+{% endblock %}

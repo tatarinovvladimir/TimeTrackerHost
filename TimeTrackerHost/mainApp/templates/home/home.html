@@ -1,0 +1,39 @@
+{% extends "home/wrapper.html" %}
+{% block content %}
+	<div class="container py-4 ">
+		<div class="py-3">
+			<div class="h1 text-center font-weight-normal">Hello, {{ user.first_name}}!</div>
+			<div class="h3 text-center font-weight-normal">Welcome on Timetracker! Let's check the news!</div>
+		</div>
+		<div class="row justify-content-center ">
+			<button class="btn btn-dark " data-toggle="collapse" href="#news" role="button" aria-expanded="false" aria-controls="news">
+			Check news
+			</button>
+		</div>
+		
+		
+		
+		<div class="collapse" id="news">
+		<hr class="bg-dark">
+		{% for i in news %}
+			
+			<div class="py-4 my-5 border-bottom  border-dark">
+
+				<div class="h3 text-center font-weight-normal">{{i.name}} </div>
+				<div class="h5 py-4 text-center te font-weight-normal">{% autoescape off %} {{ i.text }} {% endautoescape %}</div>
+				<div class="row w-100 justify-content-md-between ">
+					
+					<div class="text-center col-md-6 col-sm-12">{% if i.limitation_time != None %}Time limit: {{i.limitation_time}} days{% endif %}</div>
+					
+					<div class="text-center col-md-6 col-sm-12">{{i.date}}</div>
+				</div>
+			</div>
+			
+			
+		{% endfor %}
+		</div>
+	</div>
+	
+	{% load static %}
+	<script src="{% static 'js/homescript.js' %}"></script>
+{% endblock %}

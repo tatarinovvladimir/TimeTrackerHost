@@ -1,0 +1,110 @@
+{% extends "home/wrapper.html" %}
+
+{% block content %}
+
+	<div class="h-100  d-flex justify-content-center align-items-center  pb-4">
+		<div class="container h-100">
+			<div class="card bg-dark text-white">
+				<div class="card-header row w-100 m-0 ">
+					<div class=" {% if user.is_staff %} col-md-8 {% else %} col-md-10 {% endif %} col-sm-12">
+
+						<h4 class="card-title text-center  " >{{user.username}} </h4>
+					</div>
+					{% if user.is_staff %}
+					<div class="col-md-2 col-sm-12 pb-2">
+					<a class="btn btn-info w-100 "  href="/admin">Admin panel</a>
+
+					</div>
+					{% endif %}
+					<div class="col-md-2 col-sm-12 ">
+						<a class="btn btn-info w-100 "  href="/log_out">Log out</a>
+
+					</div>
+					
+				</div>
+				<div class="card-body">
+					
+					<div class=" row ">
+						<div class=" col-md-6  col-sm-12 d-flex  justify-content-center align-items-center pb-2 ">
+							 
+						
+							<img src="/media/{{user.profile.profile_image}}"  class="img-thumbnail  img-fluid avatar_image"  alt="#">
+							
+						
+						</div>
+						<div class=" table-responsive-sm col-md-6 col-sm-12 ">
+							<table class="table h-100 w-100 table-hover ">
+								<thead>
+									<tr>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">Username: </th>
+										<td>{{user.username}} </td>
+										
+									</tr>
+									<tr>
+										<th scope="row">Name:</th>
+										<td>{{user.first_name}}</td>
+										
+									</tr>
+									<tr>
+										<th scope="row">Surname: </th>
+										<td>{{user.last_name}}</td>
+									</tr>
+									<tr>
+										<th scope="row">Function: </th>
+										<td>{{user.profile.user_function}}</td>
+									</tr>
+									<tr>
+										<th scope="row">Date of birth: </th>
+										<td>{{user.profile.date_of_birth}}</td>
+									</tr>
+									<tr>
+										<th scope="row">Permissions: </th>
+										
+										{% if user.groups.all.0 in chief_admin_group %}
+											<td class="chief_admin">{{user.groups.all.0}}</td>					
+										{% elif user.groups.all.0 in admin_group %}
+											<td class="admin">{{user.groups.all.0}}</td>
+										{% elif user.groups.all.0 in moder_group %}
+											<td class="moder">{{user.groups.all.0}}</td>	
+										{% else %}
+										<td>User</td>
+										{% endif %}
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						
+						
+				
+						
+						
+					</div>
+					<div>
+					</div>
+					
+				</div>
+				<div class="card-footer pr-1">
+					
+					<form action="/upload_profile_img"  method="POST" enctype="multipart/form-data">
+						{% csrf_token %}
+						<div class="row w-100  text-center">
+							<div class="col-md-6 col-sm-12 pb-2 ">
+							<input type="file"  name='avatarimage'  id="customFile" >
+							<label class="btn btn-info w-100" id="cflabel" for="customFile">Choose img</label>
+							</div>
+							<div class="col-md-6 col-sm-12 ">
+							<button type="submit" class="btn btn-info w-100">Save image</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% load static %}
+	<script src="{% static 'js/myprofilescript.js' %}"></script>
+{% endblock %}
