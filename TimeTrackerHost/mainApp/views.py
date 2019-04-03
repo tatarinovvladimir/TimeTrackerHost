@@ -16,7 +16,7 @@ from mainApp.forms import TaskEditForm
 from mainApp.forms import TaskAddForm
 from mainApp.forms import AddComentForm
 from mainApp.forms import AddNoteForm
-
+from mainApp.forms import ProjectAddForm
 from django.core.mail import send_mail
 from django.conf import settings
 import os
@@ -77,22 +77,49 @@ def myprojects(request):
 
         user = User.objects.get(username=request.user.username)
         title = "My projects"
-        project = Project.objects.filter(developers=user.profile)
+        addproject = ProjectAddForm()
 
+        if request.user.is_staff:
+            project = Project.objects.filter()
+        else:
+            project = Project.objects.filter(developers=user.profile)
 
-        return render(request, "myprojects/myprojects.html", { "User": user, "title" : title, "project":project})
+        if request.POST:
+            addproject = ProjectAddForm(request.POST)
+            if addproject.is_valid():
+            
+                newform = addproject.save(commit=False)
+                newform.author = user.profile
+                newform.save()
+                addproject.save_m2m()
+                return HttpResponseRedirect(request.path)
+            else:
+                return HttpResponseRedirect(request.path)        
+
+            
+        
+
+        return render(request, "myprojects/myprojects.html", { "User": user, "title" : title, "project":project, 
+        'addproject' : addproject})
 
 @login_required(login_url="/log_in")
 def mytasks(request):
 
         user = User.objects.get(username=request.user.username)
         title = "My tasks"
-        task = Task.objects.filter(implementers=user.profile).order_by('priority')
+        if request.user.is_staff:
+            task = Task.objects.filter().order_by('priority')
+            print("staff")
+        else:
+            task = Task.objects.filter(implementers=user.profile, project__developers=user.profile).order_by('priority')
+
         addform = TaskAddForm()
+
 
 
         if request.POST:
             addform = TaskAddForm(request.POST)
+            
             print("post")
 
             if addform.is_valid():
@@ -111,6 +138,9 @@ def mytasks(request):
             else:
                 return HttpResponseRedirect(request.path)
 
+
+
+
         return render(request, "mytasks/mytasks.html", {"User": user, "title" : title, "task" : task, 'addform' : addform})
 
 @login_required(login_url="/log_in")
@@ -118,10 +148,16 @@ def journal(request):
 
         user = User.objects.get(username=request.user.username)
         title = "Journal"
-        journalpost = JournalPost.objects.filter(for_task__implementers=user.profile).order_by('-post_date')[:50]
+        if request.user.is_staff:
+            journalpost = JournalPost.objects.filter().order_by('-post_date')[:100]
+        else:
+            journalpost = JournalPost.objects.filter(made_by=user.profile).order_by('-post_date')[:50]
+
         addnoteform = AddNoteForm()
        
-        addnoteform.fields["for_task"].queryset = Task.objects.filter(project__developers=user.profile)
+        addnoteform.fields["for_task"].queryset = Task.objects.filter(implementers=user.profile, project__developers=user.profile)
+        print(request.user.profile)
+        print(request.user.is_staff)
 
         if request.POST:
 
@@ -143,6 +179,11 @@ def mytasksdetail(request, pk):
         old_task = Task.objects.get(id=pk)
         add_comment_form = AddComentForm()
         taskeditform = TaskEditForm()
+
+        taskeditform.fields['priority'].initial = task.priority
+        taskeditform.fields['task_type'].initial = task.task_type
+        taskeditform.fields['project'].initial = task.project
+
         chief_admin_group = Group.objects.filter(name="Chief Administrator")
         admin_group = Group.objects.filter(name="Administrator")
         moder_group = Group.objects.filter(name="Moderator")
@@ -154,13 +195,15 @@ def mytasksdetail(request, pk):
 
 
         user = User.objects.get(username=request.user.username)
-       
+
+
+
         if request.POST and "edittaskname" in request.POST:
             
             taskeditform = TaskEditForm(request.POST, instance=task)
             
-            if taskeditform.is_valid():
-                
+            if taskeditform.is_valid() and len(taskeditform.changed_data) > 0:
+               
                 subject = '{} was changed!'.format(task)
                 message = '''Hello! \n We have a few changes in {}. Please check it! \n \nList of changes: \n \n'''.format(old_task)
 

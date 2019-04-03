@@ -8,7 +8,7 @@ class Project(models.Model):
     short_description = models.CharField(max_length=100, blank=False, null=True)
     full_description = tn_models.HTMLField(blank=False)
     developers = models.ManyToManyField(Profile,  related_name="Developers")
-    author = models.ForeignKey(Profile, related_name="Author",  on_delete=models.PROTECT)
+    author = models.ForeignKey(Profile, related_name="Author", editable=False, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.name
@@ -34,7 +34,7 @@ class Task(models.Model):
     priority = models.CharField(max_length=50,choices=(("Normal", "Normal"),("High", "High"),("Extra", "Extra")))
     estimated_time = models.FloatField(verbose_name="Estimated time in hours", blank=False)
     implementers = models.ManyToManyField(Profile, related_name="implementers")
-    creator = models.ForeignKey(Profile,  null=True, on_delete=models.CASCADE)
+    creator = models.ForeignKey(Profile, editable=False, null=True, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, related_name="project", on_delete=models.CASCADE)
 
 
