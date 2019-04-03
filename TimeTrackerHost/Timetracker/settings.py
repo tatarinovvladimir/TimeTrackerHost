@@ -25,7 +25,7 @@ SECRET_KEY = '_=ffxf^&s8bfpy(0$0@k%y+_hf^8$@7b7&-2^7e89%1ev8dh_g'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -121,31 +121,31 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
-
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
-MEDIA_ROOT = os.path.join(BASE_DIR, "mainApp/media")
-
-MEDIA_URL = '/media/'
 # STATIC_URL = '/static/'
 
-# STATIC_ROOT = '/home/VladimirFT/TimeTrackerHost/TimeTrackerHost/static'
-
-# # STATICFILES_DIRS = (
-# #     'mainApp/static',
-# #     'accounts_manager/static'
-# # )
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # MEDIA_ROOT = os.path.join(BASE_DIR, "mainApp/media")
 
 # MEDIA_URL = '/media/'
+STATIC_URL = '/static/'
+
+STATIC_ROOT = '/home/VladimirFT/TimeTrackerHost/TimeTrackerHost/static'
+
+STATICFILES_DIRS = (
+    'mainApp/static',
+    'accounts_manager/static'
+)
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "mainApp/media")
+
+MEDIA_URL = '/media/'
 
 TINYMCE_DEFAULT_CONFIG = {
 'plugins':'autoresize'
 
-   
-    
+
+
 }
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
